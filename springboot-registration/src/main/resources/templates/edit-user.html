@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit User</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            border: 1px solid black;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-title {
+            color: darkgreen;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            margin-top: 10px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="form-container">
+            <h1 class="form-title text-center"><b>Edit User</b></h1>
+            <form th:action="@{/updateUser}" th:object="${user}" method="post" onsubmit="return validateForm()">
+                <div class="mb-3">
+                    <label for="name" class="form-label"><b>Full Name</b></label>
+                    <input type="text" id="name" th:field="*{name}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label"><b>Username</b></label>
+                    <input type="text" id="username" th:field="*{username}" class="form-control" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label"><b>Email</b></label>
+                    <input type="email" id="email" th:field="*{email}" class="form-control" required>
+                    <div id="email-error" class="alert alert-danger d-none mt-2">Please enter a valid email without special characters and dots.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label"><b>Phone</b></label>
+                    <input type="text" id="phone" th:field="*{phone}" class="form-control" required>
+                    <div id="phone-error" class="alert alert-danger d-none mt-2">Please enter a valid phone number.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="dateOfBirth" class="form-label"><b>Date of Birth</b></label>
+                    <input type="date" id="dateOfBirth" th:field="*{dateOfBirth}" class="form-control" required max="2018-12-31">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label"><b>Password</b></label>
+                    <input type="password" id="password" th:field="*{password}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="cpassword" class="form-label"><b>Confirm Password</b></label>
+                    <input type="password" id="cpassword" th:field="*{cpassword}" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary w-100"><b>Update</b></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const emailError = document.getElementById('email-error');
+            const phoneError = document.getElementById('phone-error');
+            const emailValue = emailInput.value;
+            const phoneValue = phoneInput.value;
+
+            // Validate phone number
+            const phoneRegex = /^[7-9]\d{9}$/;
+            if (!phoneRegex.test(phoneValue)) {
+                phoneError.classList.remove('d-none');
+                return false;
+            } else {
+                phoneError.classList.add('d-none');
+            }
+
+            // Validate email address
+            // Email regex without special characters or dots
+            const emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(emailValue)) {
+                emailError.classList.remove('d-none');
+                return false;
+            } else {
+                emailError.classList.add('d-none');
+            }
+
+            // If all validations pass
+            return true;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dobField = document.getElementById('dateOfBirth');
+            dobField.addEventListener('input', function() {
+                const selectedDate = new Date(dobField.value);
+                const maxAllowedDate = new Date('2018-12-31');
+                if (selectedDate > maxAllowedDate) {
+                    dobField.setCustomValidity('Date of birth must be on or before December 31, 2018');
+                } else {
+                    dobField.setCustomValidity('');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
